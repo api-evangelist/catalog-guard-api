@@ -1,0 +1,47 @@
+name: Catalog Guard API
+description: >-
+  A bounded, fail-closed catalog preflight/validation service for Shopify-shaped supplier product CSVs. Exposes an
+  unauthenticated JSON HTTP API that validates CSV text or normalized product rows and returns deterministic validation
+  results. Does not accept file uploads, credentials, payment data, or store connections; it does not import or modify
+  catalogs.
+url: https://catalog-guard-api.apievangelist.com/apis.yml
+created: '2026-07-31'
+modified: '2026-07-31'
+specificationVersion: '0.21'
+tags:
+  - ecommerce
+  - catalog-validation
+  - shopify
+  - data-quality
+  - csv-validation
+  - product-data-qa
+  - data-preflight
+apis:
+  - name: Catalog Guard Catalog Check API
+    description: >-
+      Unauthenticated REST/HTTP API for validating Shopify-shaped supplier product CSVs. POST /api/v1/catalog/check
+      accepts CSV text or normalized rows and returns a deterministic validation result; GET /api/v1/catalog/health
+      returns health and schema metadata. Backed by a public OpenAPI 3.1.0 contract.
+    humanURL: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
+    baseURL: https://catalogguard.noahcortezj-c.workers.dev
+    tags:
+      - ecommerce
+      - catalog-validation
+      - shopify
+      - data-quality
+      - csv-validation
+      - product-data-qa
+      - data-preflight
+    properties:
+      - type: OpenAPI
+        url: https://catalogguard.noahcortezj-c.workers.dev/openapi.json
+      - type: Documentation
+        url: https://catalogguard.noahcortezj-c.workers.dev/
+maintainers:
+  - FN: Catalog Guard
+    url: https://catalogguard.noahcortezj-c.workers.dev/
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 92
+  at: '2026-07-31T04:49:23.782Z'
