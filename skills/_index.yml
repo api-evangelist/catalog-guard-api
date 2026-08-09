@@ -1,0 +1,17 @@
+generated: '2026-08-09'
+method: generated
+source: >-
+  Generated from openapi/catalog-guard-api-catalog-check-openapi.json plus behaviour verified by
+  live probe on 2026-08-09. The provider publishes no skills, no AGENTS.md and no llms.txt.
+note: >-
+  The OpenAPI declares no operationIds, so skill steps bind operations by method + path — the
+  only identifiers the provider actually publishes. Nothing was invented to fill that gap.
+skills:
+- file: catalog-guard-api-preflight-supplier-csv.md
+  name: Preflight a supplier catalog CSV before a Shopify import
+  api: openapi/catalog-guard-api-catalog-check-openapi.json
+  operations: ['POST /api/v1/catalog/check', 'GET /api/v1/catalog/health']
+- file: catalog-guard-api-triage-blockers.md
+  name: Triage Catalog Guard blockers into a supplier fix list
+  api: openapi/catalog-guard-api-catalog-check-openapi.json
+  operations: ['POST /api/v1/catalog/check']

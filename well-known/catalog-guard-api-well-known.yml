@@ -1,0 +1,61 @@
+generated: '2026-08-09'
+method: probed
+source: https://catalogguard.noahcortezj-c.workers.dev/.well-known/
+host: https://catalogguard.noahcortezj-c.workers.dev
+result: none
+notes: >-
+  No /.well-known/ document is published on the only host this provider operates.
+  A control probe of /.well-known/zzz-nonexistent-abc returned 404 with a plain-text
+  "Not Found" body, confirming the host does not answer /.well-known/* with an SPA
+  catch-all 200 — so these 404s are real absences, not soft-404s that a naive probe
+  would have credited as hits. The provider runs entirely on a Cloudflare workers.dev
+  subdomain it does not control at the apex, so it cannot publish an RFC 9116
+  security.txt or a CAA/DNSSEC posture for its own registrable domain even in principle.
+  NOTE: no WellKnown pointer is wired into apis.yml — there is no document to point at.
+documents:
+- path: /.well-known/security.txt
+  status: 404
+- path: /.well-known/openid-configuration
+  status: 404
+- path: /.well-known/oauth-authorization-server
+  status: 404
+- path: /.well-known/oauth-protected-resource
+  status: 404
+- path: /.well-known/api-catalog
+  status: 404
+- path: /.well-known/ai-plugin.json
+  status: 404
+- path: /.well-known/agent-card.json
+  status: 404
+- path: /.well-known/agent.json
+  status: 404
+adjacent_discovery_documents:
+- path: /apis.json
+  status: 200
+  content_type: application/json
+  file: catalog-guard-api-apis-json.json
+  description: >-
+    APIs.json 0.21 index the provider publishes itself, declaring the OpenAPI,
+    Documentation, GettingStarted, PrivacyPolicy and TermsOfService properties.
+    This is the provider's own machine-readable discovery document and is the
+    strongest agent-facing signal on the host.
+- path: /openapi.json
+  status: 200
+  content_type: application/json
+  file: ../openapi/catalog-guard-api-catalog-check-openapi.json
+  description: OpenAPI 3.1.0, 2 paths, served from the API host root.
+- path: /robots.txt
+  status: 200
+  content_type: text/plain
+  description: "User-Agent: * Allow: / — no agent-specific directives, no crawler restrictions."
+- path: /sitemap.xml
+  status: 200
+  content_type: application/xml
+  description: 8 URLs — home, diagnostic, start-shopify, three CSV guides, privacy, terms.
+- path: /llms.txt
+  status: 404
+x-evidence:
+  fetched: '2026-08-09'
+  control_path: /.well-known/zzz-nonexistent-abc
+  control_status: 404
+  control_body: Not Found

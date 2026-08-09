@@ -1,0 +1,45 @@
+generated: '2026-08-09'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: catalogguard.noahcortezj-c.workers.dev
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 10 19:05:08 2026 GMT
+  hsts: false
+  note: >-
+    HSTS is absent on the HTML routes (GET / returns no Strict-Transport-Security,
+    no CSP, no X-Frame-Options). The JSON API routes DO set them: GET
+    /api/v1/catalog/health and POST /api/v1/catalog/check return
+    strict-transport-security: max-age=31536000; includeSubDomains, plus
+    content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none',
+    x-content-type-options: nosniff, x-frame-options: DENY, referrer-policy: no-referrer,
+    cross-origin-resource-policy: same-origin, cache-control: no-store and
+    x-robots-tag: noindex, nofollow. The security-header posture is therefore
+    strong on the API surface and absent on the marketing/docs surface.
+  api_route_headers:
+    strict_transport_security: max-age=31536000; includeSubDomains
+    content_security_policy: "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+    x_content_type_options: nosniff
+    x_frame_options: DENY
+    referrer_policy: no-referrer
+    cross_origin_resource_policy: same-origin
+    cache_control: no-store
+domains:
+- domain: workers.dev
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+  note: >-
+    workers.dev is Cloudflare's shared Workers subdomain, not a domain Catalog Guard
+    controls. The SPF/DMARC records above are Cloudflare's and say nothing about this
+    provider's own email or DNS posture. Catalog Guard publishes no apex domain of its
+    own; the entire public surface is a workers.dev subdomain
+    (catalogguard.noahcortezj-c.workers.dev), which also means no /.well-known/ document,
+    security.txt, CAA policy or DNSSEC can be attributed to the provider.
+x-evidence:
+  fetched: '2026-08-09'
+  api_header_probe: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health
+  html_header_probe: https://catalogguard.noahcortezj-c.workers.dev/

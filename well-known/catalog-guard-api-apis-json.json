@@ -1,0 +1,52 @@
+{
+  "name": "Catalog Guard",
+  "description": "Bounded, fail-closed catalog preflight API for CSV text or normalized product rows. It does not accept uploads, credentials, payment data, store access, or imports.",
+  "url": "https://catalogguard.noahcortezj-c.workers.dev/apis.json",
+  "created": "2026-07-31",
+  "modified": "2026-07-31",
+  "specificationVersion": "0.21",
+  "tags": [
+    "catalog-validation",
+    "data-quality",
+    "ecommerce",
+    "shopify"
+  ],
+  "common": [
+    {
+      "type": "PrivacyPolicy",
+      "url": "https://catalogguard.noahcortezj-c.workers.dev/privacy"
+    },
+    {
+      "type": "TermsOfService",
+      "url": "https://catalogguard.noahcortezj-c.workers.dev/terms"
+    }
+  ],
+  "apis": [
+    {
+      "name": "Catalog Guard API",
+      "description": "Validate bounded catalog CSV text or normalized product rows and return deterministic blockers and warnings.",
+      "humanURL": "https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs",
+      "baseURL": "https://catalogguard.noahcortezj-c.workers.dev",
+      "tags": [
+        "catalog-validation",
+        "data-quality",
+        "ecommerce",
+        "shopify"
+      ],
+      "properties": [
+        {
+          "type": "OpenAPI",
+          "url": "https://catalogguard.noahcortezj-c.workers.dev/openapi.json"
+        },
+        {
+          "type": "Documentation",
+          "url": "https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs"
+        },
+        {
+          "type": "GettingStarted",
+          "url": "https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Catalog Guard Catalog Check API
+  version: 1.0.0
+extends: openapi/catalog-guard-api-catalog-check-openapi.json
+x-generated: '2026-08-09'
+x-method: generated
+x-source: >-
+  Derived from the provider's live OpenAPI plus behaviour verified by direct probes on
+  2026-08-09. Every action below records something observed, never something assumed. The
+  original spec is never mutated.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-08-09'
+    x-apievangelist-notes: >-
+      The published spec is thin in three specific ways, all recorded here rather than patched
+      into the original: no operationIds, no response schemas (descriptions only), and no
+      examples. Response shapes in this overlay were captured from the running service.
+- target: $.paths['/api/v1/catalog/check'].post
+  update:
+    operationId: checkCatalog
+    x-apievangelist-operationid-note: >-
+      SUGGESTED, not published. The provider declares no operationId, so no stable code-generation
+      identifier exists. Downstream artifacts in this repo bind by method + path instead.
+    tags: [catalog-validation]
+    description: >-
+      Validate Shopify-shaped supplier product data and return deterministic blockers and
+      warnings. Accepts exactly one of `csv` (raw CSV text, normalized headers) or `rows`
+      (array of normalized product objects). Stateless, unauthenticated, no persistence.
+    x-agentic-access:
+      action-class: read
+      consequence: read
+      side-effects: none
+      audit: optional
+      note: >-
+        Safe for autonomous agent invocation. The operation writes nothing, connects to no store,
+        performs no import, and accepts no credentials or payment data — the provider asserts all
+        of this inline on every response via the `disclosures` object.
+- target: $.paths['/api/v1/catalog/check'].post.requestBody.content['application/json']
+  update:
+    x-apievangelist-csv-header-contract: >-
+      VERIFIED BY PROBE and NOT DOCUMENTED by the provider: the `csv` branch requires normalized
+      column headers (supplier_sku, title, price, stock, published). A CSV using Shopify's own
+      documented export headers (Handle, Title, Variant SKU, Variant Price, Variant Inventory
+      Qty, Published) is structurally accepted but returns missing_required_field for all five
+      required fields on every row.
+- target: $.paths['/api/v1/catalog/check'].post.responses['200']
+  update:
+    x-apievangelist-response-shape: >-
+      Undeclared in the spec. Observed: {schemaVersion, api{name,version,mode,storage},
+      input{kind,sourceRows}, result{safeRows,blockerCount,warningCount,blockers[],warnings[],
+      safeFixes[]}, links{docs,health,help}, disclosures{...}}. Findings carry
+      {row, field, code, message}; `row` is 1-based INCLUDING the header row.
+    x-apievangelist-finding-codes: [missing_required_field, invalid_price, invalid_stock, invalid_published, duplicate_normalized_sku]
+    x-apievangelist-examples: examples/catalog-guard-api-examples.yml
+- target: $.paths['/api/v1/catalog/check'].post.responses['429']
+  update:
+    x-apievangelist-rate-limit: >-
+      Self-reported by the health operation as "best-effort 20 requests per minute per Cloudflare
+      isolate". No RateLimit-*, X-RateLimit-* or Retry-After headers are returned, so a client
+      cannot observe remaining budget before being refused.
+- target: $.paths['/api/v1/catalog/health'].get
+  update:
+    operationId: getCatalogHealth
+    x-apievangelist-operationid-note: SUGGESTED, not published.
+    tags: [operations]
+    description: >-
+      Return service health and schema metadata. Observed shape:
+      {schemaVersion, status, service, version, storage, rateLimit}. This is a health endpoint,
+      not a status page — no incident history and no subscription.
+    x-agentic-access:
+      action-class: read
+      consequence: read
+      side-effects: none
+- target: $.paths['/api/v1/catalog/check']
+  update:
+    x-apievangelist-undeclared-status: >-
+      GET on this path returns 405 with {"error":{"code":"method_not_allowed"}}, a status the
+      published responses map does not declare.
+- target: $.components
+  update:
+    x-apievangelist-schema-gap: >-
+      components is empty. No reusable schemas are defined and no response is schematized, so a
+      consumer cannot generate response types from this contract. A derived entity graph is kept
+      at data-model/catalog-guard-api-data-model.yml.

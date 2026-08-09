@@ -1,0 +1,57 @@
+generated: '2026-08-09'
+method: derived
+status: candidate
+source: openapi/catalog-guard-api-catalog-check-openapi.json
+search_result:
+  official_hosted_server: none
+  probes:
+  - {url: 'https://catalogguard.noahcortezj-c.workers.dev/mcp', method: 'GET + POST tools/list', status: 404}
+  - {url: 'https://catalogguard.noahcortezj-c.workers.dev/sse', method: GET, status: 404}
+  - {url: 'https://catalogguard.noahcortezj-c.workers.dev/.well-known/ai-plugin.json', method: GET, status: 404}
+  - {url: 'https://catalogguard.noahcortezj-c.workers.dev/llms.txt', method: GET, status: 404}
+  registries: >-
+    No package named for this provider on npm or PyPI; no GitHub repository found. The provider
+    publishes no agent-native surface of any kind.
+  third_party: none
+server:
+  name: catalog-guard
+  transport: http
+  url: null
+  note: >-
+    CANDIDATE ONLY. No MCP server exists. The tools below are a faithful projection of the two
+    real OpenAPI operations, offered as the shape such a server would take. Nothing here is
+    served by the provider today.
+auth:
+  methods: [none]
+  note: The backing API is unauthenticated, so a wrapper would need no credential passthrough.
+tool_count: 2
+tools:
+- name: check_catalog
+  category: validation
+  description: >-
+    Validate Shopify-shaped supplier product data and return deterministic blockers and warnings.
+    Accepts either raw CSV text or an array of normalized product row objects — exactly one of
+    the two, never both.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  http: POST /api/v1/catalog/check
+  input_schema_source: >-
+    The operation's requestBody schema is a oneOf over {csv: string maxLength 98304} and
+    {rows: array maxItems 250 of flat objects}, both additionalProperties:false. A wrapper should
+    inherit that schema verbatim rather than restate it.
+  read_only: true
+  side_effects: none
+  note: >-
+    Safe for autonomous agent use: no persistence (storage "none"), no store connection, no
+    import, no credentials. Retry-safe because it is a pure function, though the provider
+    publishes no idempotency contract.
+- name: get_catalog_guard_health
+  category: operations
+  description: >-
+    Return service health and schema metadata — status, service name, contract version, storage
+    mode, and the self-reported rate limit.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1health/get
+  http: GET /api/v1/catalog/health
+  read_only: true
+  side_effects: none
+x-evidence:
+  fetched: '2026-08-09'

@@ -1,0 +1,134 @@
+generated: '2026-08-09'
+method: searched
+source: >-
+  Live request/response pairs captured verbatim from
+  https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check and /api/v1/catalog/health
+  on 2026-08-09, plus the x-curl-example extension the provider ships in its own OpenAPI.
+note: >-
+  The OpenAPI declares no examples and no response schemas — every response is described in a
+  single prose sentence. These examples were therefore captured from the running service so an
+  agent has a real payload to work from. Nothing below is synthetic except the product data
+  itself, which is fictional test data of our own.
+provider_published:
+- name: x-curl-example
+  source: openapi.json top-level x-curl-example extension
+  value: >-
+    curl -sS https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check
+    -H 'content-type: application/json'
+    --data '{"rows":[{"supplier_sku":"SKU-1","title":"Widget","price":"12.50","stock":3,"published":true}]}'
+examples:
+- name: check-rows-clean
+  operation: POST /api/v1/catalog/check
+  status: 200
+  description: Normalized rows input, no findings.
+  request:
+    rows:
+    - {supplier_sku: SKU-1, title: Widget, price: '12.50', stock: 3, published: true}
+  response:
+    schemaVersion: catalog-guard.api.v1
+    api: {name: Catalog Guard, version: v1, mode: fail_closed, storage: none}
+    input: {kind: rows, sourceRows: 1}
+    result: {safeRows: 1, blockerCount: 0, warningCount: 0, blockers: [], warnings: [], safeFixes: []}
+    links:
+      docs: https://catalogguard.noahcortezj-c.workers.dev/openapi.json
+      health: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health
+      help: https://catalogguard.noahcortezj-c.workers.dev/start-shopify
+    disclosures:
+      noCredentialsOrPaymentData: true
+      noStoreConnectionOrImport: true
+      noGuarantee: true
+- name: check-csv-with-blockers
+  operation: POST /api/v1/catalog/check
+  status: 200
+  description: >-
+    CSV input with normalized headers, two data rows, exercising four distinct finding codes
+    including a cross-row SKU collision. Note row numbers are header-inclusive.
+  request:
+    csv: |
+      supplier_sku,title,price,stock,published
+      SKU-1,Widget,12.50,3,true
+      SKU-1,Widget Dup,abc,-2,maybe
+  response:
+    input: {kind: csv, sourceRows: 2}
+    result:
+      safeRows: 0
+      blockerCount: 5
+      warningCount: 0
+      blockers:
+      - {row: 3, field: price, code: invalid_price, message: unparseable or ambiguous price}
+      - {row: 3, field: stock, code: invalid_stock, message: unparseable stock}
+      - {row: 3, field: published, code: invalid_published, message: unparseable published flag}
+      - {row: 2, field: supplier_sku, code: duplicate_normalized_sku, message: 'ambiguous duplicate normalized SKU collision: rows 2, 3'}
+      - {row: 3, field: supplier_sku, code: duplicate_normalized_sku, message: 'ambiguous duplicate normalized SKU collision: rows 2, 3'}
+      safeFixes: []
+- name: check-csv-shopify-headers-rejected
+  operation: POST /api/v1/catalog/check
+  status: 200
+  description: >-
+    The trap worth documenting. A CSV using Shopify's own documented product-CSV headers is
+    accepted structurally but every row is fully blocked, because the API wants normalized
+    headers instead.
+  request:
+    csv: |
+      Handle,Title,Variant SKU,Variant Price,Variant Inventory Qty,Published
+      widget,Widget,SKU-1,12.50,3,TRUE
+  response:
+    input: {kind: csv, sourceRows: 1}
+    result:
+      safeRows: 0
+      blockerCount: 5
+      blockers:
+      - {row: 2, field: supplier_sku, code: missing_required_field, message: missing required supplier_sku}
+      - {row: 2, field: title, code: missing_required_field, message: missing required title}
+      - {row: 2, field: price, code: missing_required_field, message: missing required price}
+      - {row: 2, field: stock, code: missing_required_field, message: missing required stock}
+      - {row: 2, field: published, code: missing_required_field, message: missing required published}
+- name: health
+  operation: GET /api/v1/catalog/health
+  status: 200
+  response:
+    schemaVersion: catalog-guard.api.v1
+    status: ok
+    service: catalog-check
+    version: v1
+    storage: none
+    rateLimit: best-effort 20 requests per minute per Cloudflare isolate
+- name: error-unsupported-media-type
+  operation: POST /api/v1/catalog/check
+  status: 415
+  description: No content-type header.
+  response:
+    schemaVersion: catalog-guard.api.v1
+    error: {code: unsupported_media_type, message: 'content-type must be application/json'}
+- name: error-invalid-shape
+  operation: POST /api/v1/catalog/check
+  status: 400
+  description: Body carried neither csv nor rows.
+  request: {nope: 1}
+  response:
+    schemaVersion: catalog-guard.api.v1
+    error: {code: invalid_shape, message: body must contain exactly one of csv or rows}
+- name: error-invalid-rows
+  operation: POST /api/v1/catalog/check
+  status: 400
+  description: 300 rows submitted against a maxItems of 250.
+  response:
+    schemaVersion: catalog-guard.api.v1
+    error: {code: invalid_rows, message: rows must be an array with at most 250 items}
+- name: error-body-too-large
+  operation: POST /api/v1/catalog/check
+  status: 413
+  description: 200000-character csv string.
+  response:
+    schemaVersion: catalog-guard.api.v1
+    error: {code: body_too_large, message: body must be no more than 131072 bytes}
+- name: error-method-not-allowed
+  operation: GET /api/v1/catalog/check
+  status: 405
+  description: Undeclared in the OpenAPI responses map, but returned by the live service.
+  response:
+    schemaVersion: catalog-guard.api.v1
+    error: {code: method_not_allowed, message: use POST with application/json}
+x-evidence:
+  fetched: '2026-08-09'
+  host: https://catalogguard.noahcortezj-c.workers.dev

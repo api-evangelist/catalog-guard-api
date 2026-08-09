@@ -1,0 +1,139 @@
+generated: '2026-08-09'
+method: searched
+source: >-
+  openapi/catalog-guard-api-catalog-check-openapi.json (status codes + descriptions)
+  and live probes of https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check
+  (error bodies captured verbatim from the running API)
+format: custom
+rfc9457: false
+envelope:
+  media_type: application/json
+  shape: '{"schemaVersion": "catalog-guard.api.v1", "error": {"code": "<slug>", "message": "<human sentence>"}}'
+  fields:
+    schemaVersion: Constant contract version string, present on every response including errors.
+    error.code: Stable machine-readable snake_case slug. This is the field to branch on.
+    error.message: Human-readable sentence. Not stable; do not parse.
+  note: >-
+    The API does NOT use RFC 9457 application/problem+json. There is no `type` URI, no
+    `title`, no `detail`, no `instance`. Errors are a flat two-field object under `error`,
+    served as application/json. Agents should switch on error.code, not on the message.
+    Successful responses use a different envelope entirely (api/input/result/links/disclosures) —
+    the presence of an `error` key is the discriminator.
+problems:
+- status: 400
+  code: invalid_shape
+  title: Request body did not match the request contract
+  message: body must contain exactly one of csv or rows
+  remediation: >-
+    Send exactly one of the two documented top-level keys. `{"csv": "<text>"}` or
+    `{"rows": [ ... ]}`. Both, neither, or any other top-level key is rejected —
+    the OpenAPI request schema sets additionalProperties:false on both branches of the oneOf.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: probed
+- status: 400
+  code: invalid_rows
+  title: rows array violated its declared bound
+  message: rows must be an array with at most 250 items
+  remediation: >-
+    Chunk the catalog into batches of 250 normalized rows or fewer, or switch to the
+    `csv` branch (bounded separately at 98304 characters). maxItems:250 is declared in the spec.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: probed
+- status: 405
+  code: method_not_allowed
+  title: Wrong HTTP method on the check endpoint
+  message: use POST with application/json
+  remediation: The check endpoint is POST-only. GET/PUT/DELETE return 405. This status is NOT declared in the OpenAPI responses map.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: probed
+  spec_gap: true
+- status: 413
+  code: body_too_large
+  title: Request body exceeded the hard byte ceiling
+  message: body must be no more than 131072 bytes
+  remediation: >-
+    Keep the raw request body under 131072 bytes (128 KiB). Note this is a different, larger
+    bound than the 98304-character maxLength the spec declares on the `csv` string itself —
+    the byte ceiling is enforced on the whole JSON body before parsing (fail-closed).
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: probed
+- status: 415
+  code: unsupported_media_type
+  title: Missing or wrong Content-Type
+  message: "content-type must be application/json"
+  remediation: "Always send the header content-type: application/json. The API does not sniff the body."
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: probed
+- status: 429
+  code: null
+  title: Best-effort per-isolate rate limit
+  message: null
+  remediation: >-
+    Back off and retry. GET /api/v1/catalog/health self-describes the limit as
+    "best-effort 20 requests per minute per Cloudflare isolate". Declared in the OpenAPI
+    responses map; the error body for this status was NOT provoked during probing, so the
+    code slug is unknown rather than assumed. No Retry-After or RateLimit-* headers were
+    observed on any response.
+  source_operation: openapi/catalog-guard-api-catalog-check-openapi.json#/paths/~1api~1v1~1catalog~1check/post
+  verified: declared-only
+validation_findings:
+  note: >-
+    Distinct from API errors: a 200 response carries per-row findings under result.blockers[]
+    and result.warnings[], each with {row, field, code, message}. These are the product's
+    output, not transport errors. One finding code was observed live.
+  row_numbering: >-
+    Findings report `row` 1-based INCLUDING the header row, so the first data row of a CSV is
+    reported as row 2. Verified: a 2-data-row CSV produced findings on rows 2 and 3 with
+    input.sourceRows = 2.
+  observed_codes:
+  - code: missing_required_field
+    kind: blocker
+    fields_seen: [supplier_sku, title, price, stock, published]
+    message: missing required <field>
+  - code: invalid_price
+    kind: blocker
+    field: price
+    message: unparseable or ambiguous price
+  - code: invalid_stock
+    kind: blocker
+    field: stock
+    message: unparseable stock
+  - code: invalid_published
+    kind: blocker
+    field: published
+    message: unparseable published flag
+  - code: duplicate_normalized_sku
+    kind: blocker
+    field: supplier_sku
+    message: 'ambiguous duplicate normalized SKU collision: rows 2, 3'
+    note: Emitted once per participating row, and names every colliding row in the message.
+  documented_check_families:
+  - required values (supplier_sku, title, price, stock, published)
+  - basic number formats
+  - option/variant pair completeness
+  - normalized SKU collisions
+  - ambiguous weight values
+  - CSV structural failures (unclosed quotes, malformed rows, duplicate headers)
+  source: https://catalogguard.noahcortezj-c.workers.dev/ and /diagnostic
+  header_contract_caveat: >-
+    IMPORTANT and undocumented: the `csv` branch expects NORMALIZED column headers
+    (supplier_sku, title, price, stock, published), NOT Shopify's own product-CSV export headers.
+    Verified: a CSV with Shopify's documented headers (Handle, Title, Variant SKU, Variant Price,
+    Variant Inventory Qty, Published) returned missing_required_field for all five required
+    fields on every row, while the same data under normalized headers validated as expected.
+    Neither the OpenAPI, the /api/v1/catalog/docs endpoint, nor the CSV guides state this
+    mapping requirement, and the product is marketed for "Shopify-shaped supplier CSVs" — so a
+    caller following the guides literally gets a fully-blocked result with a misleading reason.
+    This is a documentation gap to raise with the provider, not a defect we should paper over.
+  note_incomplete: >-
+    Five finding codes were observed live. The remaining finding codes are documented
+    as check families in prose, not as an enumerated code registry — the provider publishes no
+    finding-code reference page. They are recorded here as families, not invented as codes.
+x-evidence:
+  fetched: '2026-08-09'
+  probes:
+  - {request: 'POST /api/v1/catalog/check no content-type', status: 415, code: unsupported_media_type}
+  - {request: 'POST /api/v1/catalog/check {"nope":1}', status: 400, code: invalid_shape}
+  - {request: 'POST /api/v1/catalog/check 300 rows', status: 400, code: invalid_rows}
+  - {request: 'POST /api/v1/catalog/check 200000-char csv', status: 413, code: body_too_large}
+  - {request: 'GET /api/v1/catalog/check', status: 405, code: method_not_allowed}

@@ -1,0 +1,118 @@
+generated: '2026-08-09'
+method: searched
+source: >-
+  https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs,
+  https://catalogguard.noahcortezj-c.workers.dev/openapi.json,
+  https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health,
+  and live request/response probes
+summary: >-
+  A two-operation, unauthenticated, stateless JSON API with a hard fail-closed posture.
+  Every cross-cutting convention below was confirmed against the running service, not
+  inferred from marketing copy.
+authentication:
+  style: none
+  detail: >-
+    No credential of any kind. No API key, no bearer token, no OAuth. The OpenAPI declares
+    no securitySchemes and none of the operations carry a security requirement. The provider
+    states explicitly that it does not accept credentials, payment data, or store connections.
+  artifact: authentication/catalog-guard-api-authentication.yml
+idempotency:
+  supported: false
+  key_header: null
+  detail: >-
+    There is NO idempotency contract — no Idempotency-Key header, no request-id echo, no
+    replay window. The endpoint is nonetheless SAFE TO RETRY: it is a pure function over the
+    request body with no persistence (GET /api/v1/catalog/health reports storage "none", and
+    the API self-describes mode "fail_closed", storage "none" on every check response), so a
+    repeated POST produces the same result and creates no duplicate side effect. That is a
+    property of the design, not a guarantee the provider publishes.
+  note: >-
+    Deliberately NOT wired as a `type: Idempotency` pointer in apis.yml. Retry-safety by
+    statelessness is not an idempotency contract, and claiming one here would credit the
+    provider with a guarantee it has never made.
+pagination:
+  supported: false
+  detail: >-
+    No pagination. The check operation is bounded instead: at most 250 rows per request
+    (maxItems) or 98304 characters of CSV text (maxLength), with a 131072-byte hard ceiling
+    on the whole request body. Callers chunk client-side; the API returns no cursor, no
+    next link, and no total count beyond input.sourceRows.
+  bounds:
+    max_rows_per_request: 250
+    max_csv_characters: 98304
+    max_body_bytes: 131072
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+  detail: The request schema sets additionalProperties:false on both branches; there is no passthrough metadata field.
+request_tracing:
+  request_id_header: null
+  detail: >-
+    No X-Request-Id or correlation header is issued or accepted. The only per-request
+    identifier available to a caller is Cloudflare's cf-ray response header, which is edge
+    infrastructure, not an API contract.
+versioning:
+  scheme: uri-path
+  current: v1
+  path_prefix: /api/v1
+  payload_version_field: schemaVersion
+  payload_version_value: catalog-guard.api.v1
+  detail: >-
+    Version appears in two independent places: the URI path (/api/v1/...) and a schemaVersion
+    string echoed on every response body, success or error. The OpenAPI info.version is "v1".
+    An agent can pin on schemaVersion without parsing the URL.
+  artifact: lifecycle/catalog-guard-api-lifecycle.yml
+content_negotiation:
+  request_media_type: application/json
+  enforced: true
+  detail: A missing or non-JSON content-type is rejected 415 unsupported_media_type. The API does not sniff bodies.
+  response_media_type: application/json
+response_envelope:
+  success:
+    discriminator: presence of `result`
+    fields:
+      schemaVersion: contract version constant
+      api: '{name, version, mode, storage} — service self-description'
+      input: '{kind: csv|rows, sourceRows: n}'
+      result: '{safeRows, blockerCount, warningCount, blockers[], warnings[], safeFixes[]}'
+      links: '{docs, health, help} — absolute URLs, HATEOAS-lite'
+      disclosures: object of legal/commission/affiliation statements returned on every call
+    note: >-
+      The `disclosures` block is unusual and worth naming: every successful response carries
+      machine-readable statements that no credentials or payment data are handled, no store
+      connection or import occurs, no outcome is guaranteed, the Shopify referral-commission
+      arrangement, and non-affiliation with Shopify. An agent gets the compliance posture
+      inline with the data rather than having to fetch a terms page.
+  error:
+    discriminator: presence of `error`
+    fields: '{schemaVersion, error: {code, message}}'
+    artifact: errors/catalog-guard-api-problem-types.yml
+error_semantics:
+  format: custom
+  rfc9457: false
+  branch_on: error.code
+  artifact: errors/catalog-guard-api-problem-types.yml
+rate_limiting:
+  documented: true
+  limit: 20 requests per minute
+  scope: per Cloudflare isolate (best-effort, not a global guarantee)
+  status_on_exceed: 429
+  headers: none observed
+  detail: >-
+    Self-reported by GET /api/v1/catalog/health as "best-effort 20 requests per minute per
+    Cloudflare isolate". No RateLimit-*, X-RateLimit-* or Retry-After headers were returned on
+    any probed response, so a client cannot see remaining budget — it can only observe the 429.
+  artifact: rate-limits/catalog-guard-api-rate-limits.yml
+caching:
+  cache_control: no-store
+  detail: API routes set cache-control no-store and x-robots-tag noindex, nofollow.
+cors:
+  vary: Origin
+  detail: Responses vary on Origin; no Access-Control-Allow-Origin was returned for an unspecified origin.
+fail_closed_posture:
+  detail: >-
+    The provider's central design claim, and it holds under probe. Ambiguous input is refused
+    rather than guessed: unclosed quotes, malformed rows, duplicate headers, duplicate normalized
+    SKUs and incomplete variant pairs become blockers, not silent coercions. Supplier categories
+    are treated as audit-only and are never mapped to a Shopify taxonomy.

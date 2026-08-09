@@ -1,0 +1,36 @@
+generated: '2026-08-09'
+method: searched
+source: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health
+rate_limits:
+- api: Catalog Guard Catalog Check API
+  scope: per Cloudflare isolate
+  limit_count: 20
+  limit_unit: requests
+  limit_period: minute
+  enforcement: best-effort
+  status_on_exceed: 429
+  headers: []
+  retry_after: false
+  detail: >-
+    Published by the API about itself: GET /api/v1/catalog/health returns
+    "rateLimit": "best-effort 20 requests per minute per Cloudflare isolate".
+    "Best-effort" and "per isolate" are the provider's own words and matter — the ceiling is
+    enforced inside a single Cloudflare Worker isolate rather than globally, so the effective
+    limit a caller sees varies with edge placement and is neither a guarantee nor a quota.
+  observability: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After headers were returned on any probed response
+    (200, 400, 405, 413, 415). A client cannot read remaining budget; it can only observe a 429
+    after the fact and back off blindly.
+bounds:
+  note: >-
+    Request-size bounds do more limiting work here than the request-rate limit does.
+  max_rows_per_request: 250
+  max_csv_characters: 98304
+  max_body_bytes: 131072
+plans: none
+authentication_required: false
+x-evidence:
+  fetched: '2026-08-09'
+  url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health
+  http_status: 200
+  body_field: rateLimit

@@ -1,0 +1,130 @@
+generated: '2026-08-09'
+method: derived
+source: >-
+  openapi/catalog-guard-api-catalog-check-openapi.json (request schemas) plus live 200
+  responses captured from https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check
+  (the response bodies are NOT schematized in the spec — responses carry a description only)
+note: >-
+  The OpenAPI declares components:{} — no reusable schemas, and every response is described in
+  prose with no schema. The response entities below were therefore derived from real observed
+  payloads (one rows-input call, one csv-input call with 10 blockers), not from the contract.
+  This is the single largest gap in the provider's spec: a consumer cannot generate a response
+  type from it.
+entities:
+- name: CheckRequest
+  source: spec
+  kind: request
+  discriminator: oneOf — exactly one of csv or rows
+  fields:
+  - {name: csv, type: string, max_length: 98304, required_in_branch: csv}
+  - {name: rows, type: array, max_items: 250, required_in_branch: rows}
+  note: additionalProperties false on both branches.
+- name: ProductRow
+  source: observed
+  kind: request-element
+  detail: >-
+    A flat object of string|number|boolean|null values. The spec does not name the fields; the
+    documented required set, from the guides and the diagnostic page, is supplier_sku, title,
+    price, stock, published, with vendor, category, weight and tags also recognized.
+  fields:
+  - {name: supplier_sku, type: string, required: true, note: normalized and compared for collisions across rows}
+  - {name: title, type: string, required: true}
+  - {name: price, type: string|number, required: true}
+  - {name: stock, type: number, required: true}
+  - {name: published, type: boolean, required: true}
+  - {name: vendor, type: string, required: false}
+  - {name: category, type: string, required: false, note: audit-only, never mapped to Shopify taxonomy}
+  - {name: weight, type: string|number, required: false, note: ambiguous values are flagged, not coerced}
+  - {name: tags, type: string, required: false}
+- name: CheckResponse
+  source: observed
+  kind: response
+  fields:
+  - {name: schemaVersion, type: string, example: catalog-guard.api.v1}
+  - {name: api, type: ServiceDescriptor}
+  - {name: input, type: InputDescriptor}
+  - {name: result, type: CheckResult}
+  - {name: links, type: LinkSet}
+  - {name: disclosures, type: Disclosures}
+- name: ServiceDescriptor
+  source: observed
+  fields:
+  - {name: name, type: string, example: Catalog Guard}
+  - {name: version, type: string, example: v1}
+  - {name: mode, type: string, example: fail_closed}
+  - {name: storage, type: string, example: none}
+- name: InputDescriptor
+  source: observed
+  fields:
+  - {name: kind, type: string, enum: [csv, rows]}
+  - {name: sourceRows, type: integer}
+- name: CheckResult
+  source: observed
+  fields:
+  - {name: safeRows, type: integer}
+  - {name: blockerCount, type: integer}
+  - {name: warningCount, type: integer}
+  - {name: blockers, type: array of Finding}
+  - {name: warnings, type: array of Finding}
+  - {name: safeFixes, type: array}
+- name: Finding
+  source: observed
+  fields:
+  - {name: row, type: integer, note: 1-based and includes the header row — a blocker on data row 1 reports row 2}
+  - {name: field, type: string}
+  - {name: code, type: string, observed: [missing_required_field, invalid_price, invalid_stock, invalid_published, duplicate_normalized_sku]}
+  - {name: message, type: string}
+- name: LinkSet
+  source: observed
+  fields:
+  - {name: docs, type: uri, example: 'https://catalogguard.noahcortezj-c.workers.dev/openapi.json'}
+  - {name: health, type: uri}
+  - {name: help, type: uri, example: 'https://catalogguard.noahcortezj-c.workers.dev/start-shopify'}
+- name: Disclosures
+  source: observed
+  fields:
+  - {name: noCredentialsOrPaymentData, type: boolean}
+  - {name: noStoreConnectionOrImport, type: boolean}
+  - {name: noGuarantee, type: boolean}
+  - {name: shopifyPartnerCommission, type: string}
+  - {name: service, type: string}
+- name: HealthResponse
+  source: observed
+  fields:
+  - {name: schemaVersion, type: string}
+  - {name: status, type: string, example: ok}
+  - {name: service, type: string, example: catalog-check}
+  - {name: version, type: string, example: v1}
+  - {name: storage, type: string, example: none}
+  - {name: rateLimit, type: string, example: best-effort 20 requests per minute per Cloudflare isolate}
+- name: ErrorResponse
+  source: observed
+  fields:
+  - {name: schemaVersion, type: string}
+  - {name: error, type: 'object {code, message}'}
+  artifact: errors/catalog-guard-api-problem-types.yml
+relationships:
+- {from: CheckRequest, to: ProductRow, kind: has_many, via: rows}
+- {from: CheckResponse, to: ServiceDescriptor, kind: has_one, via: api}
+- {from: CheckResponse, to: InputDescriptor, kind: has_one, via: input}
+- {from: CheckResponse, to: CheckResult, kind: has_one, via: result}
+- {from: CheckResponse, to: LinkSet, kind: has_one, via: links}
+- {from: CheckResponse, to: Disclosures, kind: has_one, via: disclosures}
+- {from: CheckResult, to: Finding, kind: has_many, via: blockers}
+- {from: CheckResult, to: Finding, kind: has_many, via: warnings}
+- {from: Finding, to: ProductRow, kind: belongs_to, via: row}
+identifiers:
+  id_prefixes: none
+  persistent_ids: none
+  detail: >-
+    No entity has an identifier and nothing is persisted. The `row` index on a Finding is
+    positional within the submitted payload and is meaningless outside that one request.
+header_contract:
+  csv_branch_expects: normalized headers
+  required_headers: [supplier_sku, title, price, stock, published]
+  detail: >-
+    Verified by probe: the csv branch requires normalized column names, not Shopify's own
+    product-CSV export headers. A CSV using Shopify's documented headers (Handle, Title,
+    Variant SKU, Variant Price, Variant Inventory Qty, Published) is rejected with
+    missing_required_field on all five required fields. This mapping requirement is not stated
+    in the OpenAPI, the docs endpoint, or the CSV guides.
