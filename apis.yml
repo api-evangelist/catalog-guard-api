@@ -28,37 +28,22 @@ tags:
   - data-validation
   - retail
 apis:
-  - name: Catalog Guard Catalog Check API
-    description: >-
-      Unauthenticated REST/HTTP API for validating Shopify-shaped supplier product CSVs.
-      POST /api/v1/catalog/check accepts exactly one of raw CSV text or an array of normalized
-      product rows (250 rows or 98304 CSV characters maximum, inside a 131072-byte body) and
-      returns a deterministic validation result with blockers, warnings and safe fixes.
-      GET /api/v1/catalog/health returns status, contract version, storage mode and the
-      self-reported rate limit. Backed by a public OpenAPI 3.1.0 contract served from the API
-      host root. Errors use a custom {schemaVersion, error:{code, message}} envelope rather than
-      RFC 9457 problem details.
-    humanURL: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
-    baseURL: https://catalogguard.noahcortezj-c.workers.dev
-    tags:
-      - ecommerce
-      - catalog-validation
-      - shopify
-      - data-quality
-      - csv-validation
-      - product-data-qa
-      - data-preflight
-    properties:
-      - type: OpenAPI
-        url: https://catalogguard.noahcortezj-c.workers.dev/openapi.json
-      - type: OpenAPI
-        url: openapi/catalog-guard-api-catalog-check-openapi.json
-      - type: Documentation
-        url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
-      - type: APIReference
-        url: https://catalogguard.noahcortezj-c.workers.dev/openapi.json
-      - type: GettingStarted
-        url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
+- aid: catalog-guard-api:catalog-guard-api-catalog-api
+  name: Catalog Guard API Catalog API
+  description: The Catalog API from Catalog Guard API — 2 operation(s) for catalog.
+  humanURL: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
+  baseURL: https://catalogguard.noahcortezj-c.workers.dev
+  tags:
+  - Catalog
+  properties:
+  - type: OpenAPI
+    url: openapi/catalog-guard-api-catalog-api-openapi.yml
+  - type: Documentation
+    url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
+  - type: APIReference
+    url: https://catalogguard.noahcortezj-c.workers.dev/openapi.json
+  - type: GettingStarted
+    url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
 maintainers:
   - FN: Catalog Guard
     url: https://catalogguard.noahcortezj-c.workers.dev/
@@ -78,7 +63,7 @@ common:
   - type: APIsJson
     url: https://catalogguard.noahcortezj-c.workers.dev/apis.json
   - type: OpenAPI
-    url: openapi/catalog-guard-api-catalog-check-openapi.json
+    url: openapi/_original/catalog-guard-api-catalog-check-openapi.json
   - type: OpenAPIOverlay
     url: overlays/catalog-guard-api-catalog-check-overlay.yaml
   - type: Authentication
