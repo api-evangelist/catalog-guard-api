@@ -12,7 +12,7 @@ description: >-
   fields. Access is controlled by input bounds and a best-effort rate limit rather than by
   identity. Commercially it is fronted by a free in-browser CSV preflight, a $149 bounded human
   CSV Diagnostic, and a separate free Shopify store-launch referral path.
-url: https://catalog-guard-api.apievangelist.com/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/catalog-guard-api/refs/heads/main/apis.yml
 image: https://catalogguard.noahcortezj-c.workers.dev/og.png
 created: '2026-07-31'
 modified: '2026-08-09'
