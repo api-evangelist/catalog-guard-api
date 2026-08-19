@@ -1,0 +1,44 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Guard Catalog API",
+    "version": "v1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Catalog",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Validate CSV text or normalized product rows",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Validate CSV text or normalized product rows"
+        },
+        {
+          "info": {
+            "name": "Health and schema metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/health"
+          },
+          "docs": "Health and schema metadata"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,66 @@
+openapi: 3.2.0
+info:
+  title: Guard Catalog API
+  version: v1
+  description: Bounded, fail-closed catalog preflight. It does not accept uploads, credentials, payment data, or write to D1.
+servers:
+- url: https://catalogguard.noahcortezj-c.workers.dev
+tags:
+- name: Catalog
+paths:
+  /api/v1/catalog/check:
+    post:
+      summary: Validate CSV text or normalized product rows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: object
+                required:
+                - csv
+                additionalProperties: false
+                properties:
+                  csv:
+                    type: string
+                    maxLength: 98304
+              - type: object
+                required:
+                - rows
+                additionalProperties: false
+                properties:
+                  rows:
+                    type: array
+                    maxItems: 250
+                    items:
+                      type: object
+                      additionalProperties:
+                        type:
+                        - string
+                        - number
+                        - boolean
+                        - 'null'
+      responses:
+        '200':
+          description: Deterministic validation result
+        '400':
+          description: Malformed or bounded input rejected
+        '413':
+          description: Body too large
+        '415':
+          description: JSON content type required
+        '429':
+          description: Best-effort per-isolate rate limit
+      tags:
+      - Catalog
+  /api/v1/catalog/health:
+    get:
+      summary: Health and schema metadata
+      responses:
+        '200':
+          description: Healthy
+      tags:
+      - Catalog
+x-curl-example: 'curl -sS https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/check -H ''content-type: application/json'' --data ''{"rows":[{"supplier_sku":"SKU-1","title":"Widget","price":"12.50","stock":3,"published":true}]}'''
+x-help: https://catalogguard.noahcortezj-c.workers.dev/start-shopify
