@@ -18,6 +18,16 @@ created: '2026-07-31'
 modified: '2026-08-09'
 specificationVersion: '0.23'
 tags:
+  - E-Commerce
+  - catalog-validation
+  - Shopify
+  - Data Quality
+  - csv-validation
+  - product-data-qa
+  - data-preflight
+  - Data Validation
+  - Retail
+tags_raw:
   - ecommerce
   - catalog-validation
   - shopify
