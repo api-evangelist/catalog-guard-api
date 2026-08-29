@@ -1,0 +1,27 @@
+slug: catalog-guard-api
+provider: Catalog Guard API
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Retail & Consumer Goods
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Catalog
+  spec_file: catalog-guard-api-catalog-api-openapi.yml
+  capability_id: BC-2370.50
+  capability_id_l1: BC-2370
+  capability_name: Product Content Quality Management
+  confidence: 0.7
+  evidence: 'POST /api/v1/catalog/check — ''Validate CSV text or normalized product rows''; ''returns
+    a deterministic result: safe rows, blockers and warnings, each finding carrying a row index, field,
+    stable code and message'''
+  reason: The service validates supplier product catalog rows against channel (Shopify) expectations and
+    reports per-field findings — product content quality/validation before publication. Could alternatively
+    be read as generic data quality, hence 0.7.

@@ -70,6 +70,9 @@ maintainers:
   - FN: Catalog Guard
     url: https://catalogguard.noahcortezj-c.workers.dev/
 common:
+  - type: CapabilityMap
+    url: capabilities/catalog-guard-api-capability-edges.yml
+    name: Catalog Guard API Business Capability Map
   - type: Documentation
     url: https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs
   - type: APIReference
