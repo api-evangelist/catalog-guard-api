@@ -25,6 +25,20 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: open
+  trial: false
+  try_now: false
+  public: true
+  label: Open access
+  confidence: medium
+  source:
+  - authentication
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://catalogguard.noahcortezj-c.workers.dev/og.png
 created: '2026-07-31'
 modified: '2026-08-09'
@@ -107,8 +121,9 @@ common:
     url: data-model/catalog-guard-api-data-model.yml
   - type: Examples
     url: examples/catalog-guard-api-examples.yml
-  - type: MCPServer
+  - type: X-MCPServerCandidate
     url: mcp/catalog-guard-api-mcp.yml
+    note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type surfaces with a server that does not exist.'
   - type: ToolCrosswalk
     url: mcp/catalog-guard-api-tool-crosswalk.yml
   - type: LLMsTxt
