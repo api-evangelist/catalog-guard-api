@@ -1,7 +1,7 @@
 {
   "provider": "catalog-guard-api",
   "sources": [
-    "catalog-guard-api-catalog-api-openapi.yml"
+    "_original/catalog-guard-api-catalog-check-openapi.json"
   ],
   "outputs": [
     "catalog-guard-api-catalog-api-openapi.yml"
@@ -10,8 +10,14 @@
   "errors": [],
   "warnings": [],
   "notes": [
-    "catalog-guard-api-catalog-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "catalog-guard-api-catalog-check-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "catalog-guard-api-catalog-check-openapi.json: tagged paths POST /api/v1/catalog/check -> Catalog",
+    "catalog-guard-api-catalog-check-openapi.json: tagged paths GET /api/v1/catalog/health -> Catalog",
+    "catalog-guard-api-catalog-check-openapi.json: declared missing tag: Catalog",
     "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "catalog-guard-api-catalog-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
