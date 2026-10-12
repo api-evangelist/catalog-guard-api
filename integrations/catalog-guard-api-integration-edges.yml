@@ -1,0 +1,20 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/catalog-guard-api/integrations
+- https://zapier.com/apps/catalog-guard/integrations
+- https://n8n.io/integrations/catalog-guard-api/
+- https://n8n.io/integrations/catalog-guard/
+- https://composio.dev/toolkits/catalog-guard-api
+- https://monid.ai/tools/catalog-guard-api
+checked:
+- https://composio.dev/toolkits/catalog-guard-api
+- https://monid.ai/tools/catalog-guard-api
+- https://n8n.io/integrations/catalog-guard-api/
+- https://n8n.io/integrations/catalog-guard/
+- https://zapier.com/apps/catalog-guard-api/integrations
+- https://zapier.com/apps/catalog-guard/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
