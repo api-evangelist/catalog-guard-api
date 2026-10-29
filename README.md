@@ -1,4 +1,4 @@
-# Catalog Guard API (catalog-guard-api)
+# Catalog Guard API
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,73 +66,76 @@
 
 A bounded, fail-closed catalog preflight and validation service for Shopify-shaped supplier product CSVs. Exposes an unauthenticated JSON HTTP API that validates raw CSV text or normalized product rows and returns a deterministic result: safe rows, blockers and warnings, each finding carrying a row index, field, stable code and message. Ambiguous input is refused rather than guessed — unclosed quotes, malformed rows, duplicate headers, duplicate normalized SKUs and incomplete variant pairs all become blockers, and supplier categories are treated as audit-only rather than mapped to a Shopify taxonomy. The service does not accept file uploads, credentials, payment data or store connections, holds no storage, and never imports or modifies a catalog; every successful response repeats those disclosures inline as machine-readable fields. Access is controlled by input bounds and a best-effort rate limit rather than by identity. Commercially it is fronted by a free in-browser CSV preflight, a $149 bounded human CSV Diagnostic, and a separate free Shopify store-launch referral path.
 
-**APIs.json:** [https://catalog-guard-api.apievangelist.com/apis.yml](https://catalog-guard-api.apievangelist.com/apis.yml)
+**Areas:** E-Commerce · catalog-validation · Shopify · Data Quality · CSV validation · product-data-qa · data-preflight · Data Validation · Retail
 
-## Tags
+## Catalog Guard API on APIs.io
 
-- ecommerce
-- catalog-validation
-- shopify
-- data-quality
-- csv-validation
-- product-data-qa
-- data-preflight
-- data-validation
-- retail
+Everything profiled for Catalog Guard API is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/catalog-guard-api/](https://apis.io/providers/catalog-guard-api/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (1)
 
-- **Created:** 2026-07-31
-- **Modified:** 2026-08-09
+- [Catalog Guard API Catalog API](https://apis.io/apis/catalog-guard-api/catalog-guard-api-catalog-api/) — The Catalog API from Catalog Guard API — 2 operation(s) for catalog.
 
-## APIs
+### Published properties
 
-### Catalog Guard API Catalog API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-The Catalog API from Catalog Guard API — 2 operation(s) for catalog.
+#### MCP servers (1)
 
-- **Human URL:** [https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
-- **Base URL:** `https://catalogguard.noahcortezj-c.workers.dev`
+Model Context Protocol servers that expose the API to agents.
 
-#### Tags
+- [catalog-guard](https://apis.io/servers/catalog-guard-api/catalog-guard/)
 
-- Catalog
+#### Collections (1)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [OpenAPI](openapi/catalog-guard-api-catalog-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/catalog-guard-api-catalog-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/catalog-guard-api-catalog-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Guard Catalog API](https://apis.io/collections/catalog-guard-api/open-catalog-guard-api-catalog-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Catalog Guard Api Catalog Check Overlay](https://apis.io/overlays/catalog-guard-api/catalog-guard-api-catalog-check-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Catalog Guard Api Authentication](https://apis.io/security/catalog-guard-api/catalog-guard-api-authentication/)
+- [Catalog Guard Api Domain Security](https://apis.io/security/catalog-guard-api/catalog-guard-api-domain-security/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Catalog Guard Api Rate Limits](https://apis.io/rate-limits/catalog-guard-api/catalog-guard-api-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
 - [Documentation](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
-- [API Reference](https://catalogguard.noahcortezj-c.workers.dev/openapi.json)
-- [Getting Started](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
-
-## Common Properties
-
-- [Documentation](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
-- [API Reference](https://catalogguard.noahcortezj-c.workers.dev/openapi.json)
-- [Getting Started](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
+- [Getting started](https://catalogguard.noahcortezj-c.workers.dev/api/v1/catalog/docs)
+- [API reference](https://catalogguard.noahcortezj-c.workers.dev/openapi.json)
 - [Pricing](https://catalogguard.noahcortezj-c.workers.dev/diagnostic)
-- [Terms of Service](https://catalogguard.noahcortezj-c.workers.dev/terms)
-- [Privacy Policy](https://catalogguard.noahcortezj-c.workers.dev/privacy)
-- [A P Is Json](https://catalogguard.noahcortezj-c.workers.dev/apis.json)
-- [OpenAPI](openapi/_original/catalog-guard-api-catalog-check-openapi.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Open A P I Overlay](overlays/catalog-guard-api-catalog-check-overlay.yaml)
-- [Authentication](authentication/catalog-guard-api-authentication.yml)
-- [Conventions](conventions/catalog-guard-api-conventions.yml)
-- [Error Catalog](errors/catalog-guard-api-problem-types.yml)
-- [Lifecycle](lifecycle/catalog-guard-api-lifecycle.yml)
-- [Rate Limits](rate-limits/catalog-guard-api-rate-limits.yml)
-- [Conformance](conformance/catalog-guard-api-conformance.yml)
-- [Data Model](data-model/catalog-guard-api-data-model.yml)
-- [Examples](examples/catalog-guard-api-examples.yml)
-- [M C P Server](mcp/catalog-guard-api-mcp.yml)
-- [Tool Crosswalk](mcp/catalog-guard-api-tool-crosswalk.yml)
-- [L L Ms Txt](llms/catalog-guard-api-llms.txt)
-- [Agent Skill](skills/_index.yml)
-- [Domain Security](security/catalog-guard-api-domain-security.yml)
+- [Terms of service](https://catalogguard.noahcortezj-c.workers.dev/terms)
+- [Privacy policy](https://catalogguard.noahcortezj-c.workers.dev/privacy)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Catalog Guard
-**URL:** https://catalogguard.noahcortezj-c.workers.dev/
+**Unrated** — no public website could be reached for this company, so there was almost nothing to measure and nothing a reader could check.
+
+This is not a score of zero. No rating is published for this company. If that is wrong because something public exists that we missed, say so on this repository or email [info@apievangelist.com](mailto:info@apievangelist.com) and it will be re-run — free, and no justification needed.
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Catalog Guard API: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/catalog-guard-api/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
