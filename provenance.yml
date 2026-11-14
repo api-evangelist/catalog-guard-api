@@ -8,6 +8,15 @@ artifacts:
   capabilities/catalog-guard-api-capability-edges.yml:
     method: unknown
     evidence: no authorship recorded
+  certification/observations-2026-11-10.jsonl:
+    method: unknown
+    evidence: no authorship recorded
+  certification/observations-2026-11-11.jsonl:
+    method: unknown
+    evidence: no authorship recorded
+  certification/status.yml:
+    method: unknown
+    evidence: no authorship recorded
   collections/catalog-guard-api-catalog-api.opencollection.json:
     method: derived
     evidence: openapi/catalog-guard-api-catalog-api
@@ -22,6 +31,9 @@ artifacts:
     evidence: declared in the artifact
   data-model/catalog-guard-api-data-model.yml:
     method: derived
+    evidence: declared in the artifact
+  eligibility/catalog-guard-api-eligibility.yml:
+    method: harvested
     evidence: declared in the artifact
   errors/catalog-guard-api-problem-types.yml:
     method: searched
@@ -38,7 +50,7 @@ artifacts:
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-23T000603.yml:
@@ -104,6 +116,9 @@ artifacts:
   kin/score-2026-11-02T082323.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/catalog-guard-api-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
@@ -129,6 +144,9 @@ artifacts:
   patterns/catalog-guard-api-patterns.yml:
     method: derived
     evidence: declared in the artifact
+  privacy/catalog-guard-api-privacy-policy.yml:
+    method: harvested
+    evidence: declared in the artifact
   rate-limits/catalog-guard-api-rate-limits.yml:
     method: searched
     evidence: declared in the artifact
@@ -146,6 +164,9 @@ artifacts:
     evidence: declared in the artifact
   skills/catalog-guard-api-triage-blockers.md:
     method: generated
+    evidence: declared in the artifact
+  terms/catalog-guard-api-terms-of-service.yml:
+    method: harvested
     evidence: declared in the artifact
   well-known/catalog-guard-api-apis-json.json:
     method: unknown
